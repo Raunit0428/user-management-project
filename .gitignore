@@ -1,0 +1,87 @@
+# =============================================
+#  USER MANAGEMENT PROJECT — .gitignore
+# =============================================
+
+# ─── Maven build output ───────────────────
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# ─── Maven wrapper (keep these) ───────────
+.mvn/
+
+# ─── IntelliJ IDEA ────────────────────────
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+.idea_modules/
+/build/
+
+# ─── Eclipse / STS ────────────────────────
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+bin/
+
+# ─── VS Code ──────────────────────────────
+.vscode/
+*.code-workspace
+
+# ─── NetBeans ─────────────────────────────
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# ─── Sensitive config — NEVER commit ──────
+# Keep application.properties out if it has real credentials.
+# We commit application.properties.example instead (see below).
+backend/src/main/resources/application.properties
+
+# ─── Log files ────────────────────────────
+*.log
+logs/
+spring.log
+
+# ─── OS generated files ───────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ─── Java compiled files ──────────────────
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+replay_pid*
+
+# ─── Frontend (Node, if added later) ──────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+.cache/
+
+# ─── Environment / secrets ────────────────
+.env
+.env.local
+.env.*.local
+*.secret
+secrets.properties
+*.sql

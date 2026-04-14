@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+</div>
+
+<div class="container">
+
+    <!-- ── Header ── -->
+    <header class="header">
+        <div class="header-icon">
+            <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="14" r="7" fill="currentColor" opacity=".9"/><path d="M6 34c0-7.732 6.268-14 14-14s14 6.268 14 14" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+        </div>
+        <div class="header-text">
+            <h1>User Management</h1>
+            <p class="subtitle">Add, search and manage your team members</p>
+        </div>
+        <div class="stat-badge">
+            <span id="countNum">—</span>
+            <span class="stat-label">Members</span>
+        </div>
+    </header>
+
+    <!-- ── Add User Card ── -->
+    <div class="card form-card">
+        <div class="card-label">NEW MEMBER</div>
+        <h2>Add a Member</h2>
+        <div class="form-row">
+            <div class="input-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" placeholder="e.g. Aryan Sharma" autocomplete="off">
+                <span class="field-hint" id="nameError"></span>
+            </div>
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <div class="input-wrapper">
+                    <input type="email" id="email" placeholder="e.g. aryan@gmail.com" autocomplete="off">
+                    <span class="input-status" id="emailStatus"></span>
+                </div>
+                <span class="field-hint" id="emailError"></span>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button class="btn btn-primary" id="addBtn" onclick="addUser()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Member
+            </button>
+        </div>
+    </div>
+
+    <!-- ── Directory Card ── -->
+    <div class="card list-card">
+        <div class="list-header">
+            <div>
+                <div class="card-label">DIRECTORY</div>
+                <h2>All Members</h2>
+            </div>
+            <div class="list-actions">
+                <!-- Search bar -->
+                <div class="search-wrap">
+                    <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="searchInput" placeholder="Search name or email…" oninput="onSearch()" autocomplete="off">
+                    <button class="clear-search" id="clearSearch" onclick="clearSearch()" style="display:none">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <button class="btn btn-ghost" onclick="getUsers()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                    Refresh
+                </button>
+            </div>
+        </div>
+
+        <div id="loading" class="loading-bar" style="display:none"><div class="loading-fill"></div></div>
+        <div id="searchBadge" class="search-badge" style="display:none"></div>
+
+        <div id="tableWrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:52px">#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th style="width:140px">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    <tr><td colspan="4"><div class="empty-state">
+                        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                        <p>No members yet — add one above!</p>
+                    </div></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ── Toast ── -->
+<div id="toast" class="toast"></div>
+
+<!-- ── Edit Modal ── -->
+<div id="editModal" class="modal-overlay" style="display:none" onclick="closeModalOutside(event)">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2>Edit Member</h2>
+            <button class="close-btn" onclick="closeModal()">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <input type="hidden" id="editId">
+        <div class="input-group">
+            <label for="editName">Full Name</label>
+            <input type="text" id="editName" placeholder="Full Name" autocomplete="off">
+            <span class="field-hint" id="editNameError"></span>
+        </div>
+        <div class="input-group">
+            <label for="editEmail">Email Address</label>
+            <div class="input-wrapper">
+                <input type="email" id="editEmail" placeholder="Email Address" autocomplete="off">
+                <span class="input-status" id="editEmailStatus"></span>
+            </div>
+            <span class="field-hint" id="editEmailError"></span>
+        </div>
+        <div class="form-actions modal-actions">
+            <button class="btn btn-primary" onclick="updateUser()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Save Changes
+            </button>
+            <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Delete Confirm Modal ── -->
+<div id="deleteModal" class="modal-overlay" style="display:none" onclick="closeDeleteOutside(event)">
+    <div class="modal-box modal-sm">
+        <div class="delete-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </div>
+        <h2 class="delete-title">Delete Member?</h2>
+        <p class="delete-sub" id="deleteSubText">This action cannot be undone.</p>
+        <div class="form-actions modal-actions" style="justify-content:center">
+            <button class="btn btn-danger" id="confirmDeleteBtn">Yes, Delete</button>
+            <button class="btn btn-ghost" onclick="closeDeleteModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
